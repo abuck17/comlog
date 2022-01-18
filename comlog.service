@@ -1,0 +1,12 @@
+[Unit]
+Description=Communication Port Logger
+
+[Service]
+User=abuckl
+ExecStart=/usr/bin/env bash /home/abuckl/bin/exe/Arduino/comlog.sh
+RestartSec=3
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
