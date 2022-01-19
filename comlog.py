@@ -38,6 +38,15 @@ def remove(port):
           comlogFID.write("%s\n" % port )
 
 def status():
+
+  deviceHeader = "Device"
+  logHeader = "Log File"
+  statusHeader = "Currently Logging"
+
+  spacing = 5
+
+  device = []; log = []; status = [];
+
   comlogData = list(open(comlog, 'r'));
   for entry in comlogData:
     deviceFiles = glob.glob("%s/%s_*" % (logDir, os.path.basename(entry)[:-1]) )
@@ -52,7 +61,28 @@ def status():
       if results[1]:
         writing = True
 
-    print("%s\t%s\t%s" %(entry[:-1], latestDeviceFile, str(writing)) )
+    device.append(entry[:-1])
+    log.append(latestDeviceFile)
+    status.append(str(writing))
+
+  deviceMaxLen = len(deviceHeader)
+  if device:
+    deviceMaxLen = max(len(max(device, key=len)),deviceMaxLen)
+
+  logMaxLen = len(logHeader)
+  if log:
+    logMaxLen = max(len(max(log, key=len)),logMaxLen)
+
+  statusMaxLen = len(statusHeader)
+  if status:
+    statusMaxLen = max(len(max(status, key=len)),statusMaxLen)
+
+  printFormat = "%%s%s%%s%s%%s" % (spacing * " ", spacing * " ")
+  print(printFormat % (deviceHeader.ljust(deviceMaxLen), logHeader.ljust(logMaxLen), statusHeader.ljust(statusMaxLen)))
+  print("%s" % (((deviceMaxLen + logMaxLen + statusMaxLen) + (3 * spacing) + spacing) * "*"))
+  for idx in range(len(device)):
+    print(printFormat % (device[idx].ljust(deviceMaxLen), log[idx].ljust(logMaxLen), status[idx].ljust(statusMaxLen)));
+  print("\n")
 
 def main(argv):
 
