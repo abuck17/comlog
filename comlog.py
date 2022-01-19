@@ -4,6 +4,8 @@ import sys
 import os
 import stat
 import glob
+import subprocess
+import argparse
 
 comlog = os.path.expanduser("~") + "/.comlog"
 logDir = "/data/comlogs"
@@ -39,11 +41,18 @@ def status():
   comlogData = list(open(comlog, 'r'));
   for entry in comlogData:
     deviceFiles = glob.glob("%s/%s_*" % (logDir, os.path.basename(entry)[:-1]) )
-    latestDeviceFile = max(deviceFiles, key=os.path.getctime)
-    print("%s\t%s" %(entry[:-1], latestDeviceFile) )
+    
+    latestDeviceFile = None
+    if deviceFiles:
+      latestDeviceFile = max(deviceFiles, key=os.path.getctime)
 
-def helpMenu():
-  print("HELP MENU\n")
+    writing = False
+    if latestDeviceFile:
+      results = subprocess.getstatusoutput("lsof +D %s 2>/dev/null | grep %s" % (logDir, latestDeviceFile))
+      if results[1]:
+        writing = True
+
+    print("%s\t%s\t%s" %(entry[:-1], latestDeviceFile, str(writing)) )
 
 def main(argv):
 
