@@ -60,34 +60,26 @@ def main(argv):
     open(comlog, 'a').close()
     os.chmod(comlog, stat.S_IRUSR | stat.S_IWUSR)
 
-  numArgs = len(argv)
+  parser = argparse.ArgumentParser()
+  subparsers = parser.add_subparsers(dest="command")
+  addParser = subparsers.add_parser("add", help="Add port to logging")
+  removeParser = subparsers.add_parser("remove", help="Remove port from logging")
+  statusParser = subparsers.add_parser("status", help="Display current logging")
+  for parse in [addParser, removeParser]:
+    parse.add_argument("port", help="Path to device port")
 
-  if numArgs < 1:
-    helpMenu()
+  args = parser.parse_args()
+
+  if not args.command:
+    parser.print_help()
+  elif args.command == "add":
+    add(args.port)
+  elif args.command == "remove":
+    remove(args.port)
+  elif args.command == "status":
+    status()
   else:
-    if argv[0] == "add":
-      if numArgs > 2:
-        helpMenu()
-      else:
-          if numArgs == 2:
-            add(argv[1])
-          else:
-            status()
-    elif argv[0] == "remove":
-      if numArgs > 2:
-        helpMenu()
-      else:
-          if numArgs == 2:
-            remove(argv[1])
-          else:
-            status()
-    elif argv[0] == "status":
-      if numArgs > 1:
-        helpMenu()
-      else:
-        status()
-    else:
-      helpMenu()
+    parser.print_help()
 
 if __name__ == "__main__":
   main(sys.argv[1:])
