@@ -10,7 +10,7 @@ while true; do
       if [[ ! $(ps aux | grep -v grep | grep "cat ${port}") ]]; then 
         deviceName=$(basename ${port})
         datetime=$(date '+%y%m%d%H%M%S')
-        logFile="${deviceName}_${datetime}"
+        logFile="${deviceName}_${datetime}.log"
         cat ${port} > ${logDir}/${logFile} &
       fi
     fi
